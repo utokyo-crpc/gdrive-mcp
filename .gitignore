@@ -1,0 +1,12 @@
+# 秘密ファイルは絶対にコミットしない（管理者から別チャネルで配布）
+credentials.json
+gcp-oauth.keys.json
+.google-credentials-*.json
+.gmail-credentials-*.json
+.gdrive-credentials-*.json
+*-credentials*.json
+*.token.json
+# 全 json を除外（package.json は許可）
+*.json
+!package.json
+node_modules/
