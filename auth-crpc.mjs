@@ -7,10 +7,6 @@
  * writes ONE token file shared by the gdrive / gcal / gmail MCP wrappers.
  *
  * Usage:  node auth-crpc.mjs
- *         node auth-crpc.mjs --docs   # 秘書の仕組み（planner）が作業用の文書を書き換えるための、Docs だけのトークン
- *
- * --docs は Google ドキュメントの読み書き（documents）だけを取り、MCP とは別のファイル
- * .google-credentials-utokyo-docs.json に保存する。MCP のトークンは読み取り専用のまま残す。
  */
 import { createServer } from 'http';
 import { readFileSync, writeFileSync } from 'fs';
@@ -20,15 +16,14 @@ import { exec } from 'child_process';
 
 const CONFIG_DIR = join(homedir(), '.config', 'gdrive-mcp');
 const OAUTH_PATH = process.env.GDRIVE_OAUTH_PATH || join(CONFIG_DIR, 'credentials.json');
-const DOCS = process.argv.includes('--docs');
-const CREDS_OUT = process.env.GOOGLE_CREDENTIALS_PATH || join(CONFIG_DIR, DOCS ? '.google-credentials-utokyo-docs.json' : '.google-credentials-utokyo.json');
+const CREDS_OUT = process.env.GOOGLE_CREDENTIALS_PATH || join(CONFIG_DIR, '.google-credentials-utokyo.json');
 const REDIRECT_URI = 'http://localhost:4567';
 const PORT = 4567;
 
 // Drive/Calendar are read-only. Gmail is read-only PLUS compose so members can
 // create drafts (the MCP server exposes create_draft but NO send tool, so mail
 // cannot be sent through it — drafts only). Granted in one consent.
-const SCOPES = DOCS ? ['https://www.googleapis.com/auth/documents'] : [
+const SCOPES = [
   'https://www.googleapis.com/auth/drive.readonly',
   'https://www.googleapis.com/auth/calendar.readonly',
   'https://www.googleapis.com/auth/gmail.readonly',
@@ -69,7 +64,7 @@ authUrl.searchParams.set('scope', SCOPES.join(' '));
 authUrl.searchParams.set('access_type', 'offline');
 authUrl.searchParams.set('prompt', 'consent');
 
-console.log(DOCS ? '\n=== CRPC Google 認証 (Google ドキュメントの読み書き。planner 用) ===' : '\n=== CRPC Google 認証 (Drive / Calendar / Gmail 読み取り専用) ===');
+console.log('\n=== CRPC Google 認証 (Drive / Calendar / Gmail 読み取り専用) ===');
 console.log('ブラウザが開きます。自分の @g.ecc.u-tokyo.ac.jp アカウントでログインしてください。\n');
 console.log('URL:', authUrl.toString(), '\n');
 
