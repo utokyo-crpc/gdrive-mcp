@@ -110,6 +110,16 @@ claude mcp list
 
 `gdrive-utokyo` / `gcal-utokyo` / `gmail-utokyo` が **Connected** になれば完了です。
 
+## 秘書の仕組み（planner）を使う人だけ
+
+planner は作業用の文書（Google ドキュメント）へ2週間の予定を転記し、前日分を記録用の文書へ移すので、ドキュメントを書き換える権限が要ります。MCP のトークンは読み取り専用のまま残し、Google ドキュメントの読み書きだけを持つトークンを別のファイルに取ります。
+
+```bash
+node ~/.config/gdrive-mcp/auth-crpc.mjs --docs
+```
+
+`.google-credentials-utokyo-docs.json` ができます。MCP には登録しません。planner の設定（`assistant.json` の `workDoc`・`logDoc` の `credential`）から指します。
+
 ## 更新
 
 ```bash
